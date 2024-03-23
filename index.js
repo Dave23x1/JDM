@@ -1,13 +1,22 @@
-const axios = require('axios');
+const express = require('express')
+const http = require('http')
+const socketIo = require('socket.io')
 
-axios.get('https://api.spotify.com/v1/search?q=budots&type=track', {
-    headers: {
-    'Authorization': 'Bearer BQDjyOd0zURfeEoi3lH7AUNHFReJXzFa-DLXjuOUPPneX96N63515dwDSCSmdmTb88dgS4iCmZB7sOwVndum41IezETWW-YReKz2xEAyPeMFrjuIisKWHSaGke5_nK2Yc2sZvhBhDVS3Du6akZeTIw8TsG-hZqb9pEWRYEMxPWkpRW8Imbc0L37TBgpXDElBGuvJWeSnpxZt7RaUkfw'
-}
-}).then((data)=>{
-    console.log(data.data.tracks.items[0].id);
+const app =  express()
+const server = http.createServer(app)
+const io = socketIo(server)
+
+io.on('connection',(socket)=> {
+    socket.on('message', (message) =>{ 
+        io.emit('message', message);
+    });
+});
+
+server.listen(3000,()=>{
+    console.log("Server is running on port http://localhost:3000");
+
 })
 
-
-
-//Bearer BQDjyOd0zURfeEoi3lH7AUNHFReJXzFa-DLXjuOUPPneX96N63515dwDSCSmdmTb88dgS4iCmZB7sOwVndum41IezETWW-YReKz2xEAyPeMFrjuIisKWHSaGke5_nK2Yc2sZvhBhDVS3Du6akZeTIw8TsG-hZqb9pEWRYEMxPWkpRW8Imbc0L37TBgpXDElBGuvJWeSnpxZt7RaUkfw
+app.get('/', (req,res) => {
+   res.sendFile(__dirname + '/index.html');
+});
